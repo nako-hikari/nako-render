@@ -20,7 +20,7 @@ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32Bu
 function addMesh(b,cubes,im,o={}){const tw=o.tw||64,th=o.th||Math.round(64*im.height/im.width),s_=im.width/tw,p=b.userData.p;let par=b;
 if(o.flip){par=new THREE.Group();b.add(par);par.rotation.y=Math.PI}
 const og=c=>[c.origin[0],c.origin[1],-(c.origin[2]+c.size[2])];let m;const bd=bendOf(b);
-if(o.vox){const vm=stdM({vertexColors:true,roughness:1,side:THREE.DoubleSide});vm.shadowSide=THREE.FrontSide;if(o.arm)tagArm(vm);m=new THREE.Mesh(voxGeo(cubes.filter(c=>Array.isArray(c.uv)),im,o,og),vm)}
+if(o.vox){const vm=stdM({vertexColors:true,roughness:1,side:THREE.DoubleSide});vm.shadowSide=o.thk!=null?THREE.BackSide:THREE.FrontSide;if(o.arm)tagArm(vm);m=new THREE.Mesh(voxGeo(cubes.filter(c=>Array.isArray(c.uv)),im,o,og),vm)}
 else{const pos=[],nor=[],uv=[],idx=[];
 cubes.forEach(c=>{const v0=pos.length/3,arr=Array.isArray(c.uv);(arr?faces(og(c),c.size,c.uv,c.inflate||0,c.mirror):facesPF(og(c),c.size,c.uv,c.inflate||0)).forEach(f=>{const base=pos.length/3,[rx,ry,rw,rh]=f.r,fX=arr?!!c.mirror:(!!c.mirror)!==!!f.fx,fY=arr?false:!!f.fy,q=[[rx,ry],[rx+rw,ry],[rx+rw,ry+rh],[rx,ry+rh]],od=fX&&fY?[2,3,0,1]:fX?[1,0,3,2]:fY?[3,2,1,0]:[0,1,2,3],U=od.map(k=>{const t=q[k],e=.03;return[t[0]==rx?rx+e:rx+rw-e,t[1]==ry?ry+e:ry+rh-e]}),[TL,TR,BR,BL]=f.c,R_=bd&&f.n[1]==0?Math.max(4,Math.ceil(c.size[1]*2)):1;
 for(let r=0;r<=R_;r++){const t=r/R_;for(let s2=0;s2<2;s2++){const A=s2?TR:TL,B=s2?BR:BL,ua=s2?U[1]:U[0],ub=s2?U[2]:U[3];pos.push(A[0]+(B[0]-A[0])*t,A[1]+(B[1]-A[1])*t,A[2]+(B[2]-A[2])*t);nor.push(...f.n);uv.push((ua[0]+(ub[0]-ua[0])*t)/tw,1-(ua[1]+(ub[1]-ua[1])*t)/th)}}
@@ -43,5 +43,3 @@ if(blk){const t=PT(im),ms=[0,1,2,3,4,5].map(()=>{const m=stdM({map:t,alphaTest:.
 if(!vox){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),(()=>{const mt=mkMat(T(im),1);tagM(mt,ipar(kk),kk);return mt})());m.castShadow=true;g.add(m);return g}
 const d=pix(im),L=[];for(let j=0;j<h;j++)for(let i=0;i<w;i++){const k=(j*w+i)*4;if(d[k+3]<128)continue;L.push([new THREE.Matrix4().compose(new V3(i+.5-w/2,h/2-j-.5,0),new THREE.Quaternion(),new V3(1,1,th)),new THREE.Color().setRGB(d[k]/255,d[k+1]/255,d[k+2]/255).convertSRGBToLinear()])}
 const m=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1),(()=>{const mt=stdM({roughness:1});mt.userData.mp=ipar(kk);if(!P.toon&&envNow())mt.envMap=envNow();return mt})(),L.length||1);L.forEach((a,i)=>{m.setMatrixAt(i,a[0]);m.setColorAt(i,a[1])});if(!L.length)m.count=0;m.frustumCulled=false;m.castShadow=true;g.add(m);return g}
-
-
