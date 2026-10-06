@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minecraft Poser</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#14141a">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MC Poser">
+<link rel="stylesheet" href="/css/nako.css" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/gh/nako-hikari/assets@main/css/nako.css';">
+<style>
+html,body{margin:0!important;padding:0!important}
+body{background:transparent;margin:0;height:100vh;height:100dvh;overflow:hidden;overscroll-behavior:none;--sheet-h:50dvh}
+.wrapper{max-width:none!important;width:100%;height:100dvh;margin:0!important;padding:0!important;display:block!important;position:relative}
+#v{position:absolute;inset:0}
+#c{width:100%;height:100%;display:block;touch-action:none}
+#p{position:absolute;z-index:5;display:flex;flex-direction:column;padding:0;overflow:hidden;box-sizing:border-box;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);transition:transform .22s}
+#pc{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:0 var(--space-md,12px) var(--space-md,12px);overscroll-behavior:contain}
+#gh{display:none;flex:none;touch-action:none;cursor:ns-resize;padding:12px 0 8px}
+#gh i{display:block;width:48px;height:5px;border-radius:3px;margin:0 auto;background:var(--accent-dark)}
+body.dg #p{transition:none}
+body.po #p{transform:none}
+@media(min-width:900px){#p{top:0;bottom:0;left:0;width:360px;border-radius:0;padding-top:var(--space-md,12px);transform:translateX(-105%)}body.po #v{left:360px}}
+@media(max-width:899px){#p{left:0;right:0;bottom:0;height:var(--sheet-h);border-radius:18px 18px 0 0;transform:translateY(105%)}#gh{display:block}body.po #v{bottom:var(--sheet-h)}}
+#fb{position:absolute;top:8px;left:8px;right:8px;z-index:6;display:flex;flex-wrap:wrap;gap:4px;pointer-events:none}
+#fb>*{pointer-events:auto}
+#fb button{padding:8px 10px;margin:0;position:relative}
+#fb button:hover{z-index:30}
+@keyframes tipf{0%,60%{opacity:1}100%{opacity:0}}
+#fb button[data-tip]:hover::after{animation:tipf .8s forwards;content:attr(data-tip);position:absolute;top:calc(100% + 6px);left:0;white-space:nowrap;padding:3px 8px;border-radius:6px;background:var(--accent-dark);color:var(--text-on-brand);font-size:12px;font-weight:600;pointer-events:none;z-index:20}
+#fb button[data-tip]:last-child:hover::after,#fb button[data-tip]:nth-last-child(2):hover::after{left:auto;right:0}
+body.po #kb{display:none}
+#kb{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:4;width:min(calc(100% - 16px),420px);display:block}
+#kb img{width:100%!important;height:auto!important;max-width:none!important;max-height:none!important;filter:none!important;display:block;border-radius:10px}
+#st{position:absolute;left:8px;bottom:76px;z-index:8;padding:6px 10px;display:none}
+.row{display:flex;align-items:center;gap:6px;margin:4px 0}
+.row span{width:96px;flex:none}
+.row .grow{width:auto;flex:1}
+.row input[type=text],.row select,.row input[type=file]{flex:1;min-width:0}
+.row.sl{display:grid;grid-template-columns:minmax(64px,92px) minmax(0,1fr) 58px;gap:8px}
+.row.sl span{width:auto}
+.row.sl input.nv{width:100%;min-width:0;box-sizing:border-box;padding:4px 6px;text-align:right}
+.row input[type=range]{-webkit-appearance:none;appearance:none;width:100%;min-width:0;height:24px;margin:0;padding:0;background:none!important;border:0!important;box-shadow:none!important;outline:0}
+.row input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:linear-gradient(to right,var(--accent-dark) var(--p,50%),rgba(128,128,128,.35) var(--p,50%))}
+.row input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:rgba(128,128,128,.35)}
+.row input[type=range]::-moz-range-progress{height:6px;border-radius:3px;background:var(--accent-dark)}
+.row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;margin-top:-6px;border-radius:50%;background:var(--accent-dark);border:2px solid var(--text-on-brand)}
+.row input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--accent-dark);border:2px solid var(--text-on-brand)}
+#pc details{margin:8px 0}
+#pc summary{cursor:pointer;font-weight:600;padding:8px 0}
+#pc h4{margin:10px 0 2px}
+.pl{margin:8px 0;padding:6px}
+.note{text-align:center;font-size:12px;opacity:.5;margin:24px 8px 8px}
+#pc .footer-editorial{display:flex;flex-direction:column;align-items:center;text-align:center}
+#pc .footer-editorial-socials{display:flex;justify-content:center;gap:30px}
+.btns{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}
+@media(max-width:480px){.row span{width:80px}}
+@media(pointer:coarse){input[type=checkbox]{width:22px;height:22px}.row input[type=range]{height:34px}.row input[type=range]::-webkit-slider-thumb{width:24px;height:24px;margin-top:-9px}.row input[type=range]::-moz-range-thumb{width:20px;height:20px}#fb button{padding:10px 12px}}
+</style>
+</head>
+<body>
+<div class="mesh-bg"></div>
+<div class="grain-overlay"></div>
+<div class="wrapper">
+<main id="v"><canvas id="c"></canvas><a id="kb" href="https://ko-fi.com/arialicee" target="_blank" rel="noopener" aria-label="Support on Ko-fi"><img src="https://raw.githubusercontent.com/nako-hikari/assets/main/ui/kofi_banner.png" alt="Support on Ko-fi"></a></main>
+<div id="fb"></div>
+<aside id="p" class="card"></aside>
+<div id="st" class="card"></div>
+</div>
+<div class="modal-overlay" id="xp"><div class="modal"><div class="modal-header"><h2 class="modal-title">Rendering</h2></div><div class="modal-body" id="xpt"></div></div></div>
+<div class="modal-overlay" id="nakoModal">
+<div class="modal">
+<div class="modal-header">
+<h2 class="modal-title" id="nakoModalTitle"></h2>
+<button class="modal-close interactive" onclick="closeNakoModal()" aria-label="Close"><img class="icon" src="https://raw.githubusercontent.com/nako-hikari/assets/main/ui/close.png" alt=""></button>
+</div>
+<div class="modal-body" id="nakoModalBody"></div>
+<div class="modal-footer" id="nakoModalFooter"></div>
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/GammaCorrectionShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+<script src="js/config.js"></script>
+<script src="js/model-data.js"></script>
+<script src="js/textures.js"></script>
+<script src="js/faces.js"></script>
+<script src="js/bend.js"></script>
+<script src="js/mesh-builder.js"></script>
+<script src="js/ui-panel.js"></script>
+<script src="js/renderer.js"></script>
+<script src="js/pose-helpers.js"></script>
+<script src="js/scene-refresh.js"></script>
+<script src="js/controls.js"></script>
+<script src="js/actors-ui.js"></script>
+<script src="js/export.js"></script>
+<script src="js/loop.js"></script>
+<script src="js/theme-modal.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/scene-io.js"></script>
+<script src="js/main.js"></script>
+<script src="js/pwa.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "Minecraft Poser",
+  "short_name": "MC Poser",
+  "description": "Pose and render Minecraft players as PNG images.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#14141a",
+  "theme_color": "#14141a",
+  "icons": [
+    { "src": "icon.png", "sizes": "192x192 512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
