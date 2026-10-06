@@ -1,45 +1,39 @@
-function voxGeo(cubes,im,o,og){const d=pix(im),W_=im.width,tw=o.tw||64,s_=W_/tw,S=Math.min(4,Math.max(1,Math.round(s_))),pos=[],nor=[],col=[],idx=[],th2=o.thk!=null,D=th2?0:P.dep;
-const quad=(a,b,c,e,n,cl)=>{const i=pos.length/3;[a,b,c,e].forEach(v=>{pos.push(v.x,v.y,v.z);nor.push(n.x,n.y,n.z);col.push(cl[0],cl[1],cl[2])});
-const ux=b.x-a.x,uy=b.y-a.y,uz=b.z-a.z,vx=c.x-a.x,vy=c.y-a.y,vz=c.z-a.z,dt=(uy*vz-uz*vy)*n.x+(uz*vx-ux*vz)*n.y+(ux*vy-uy*vx)*n.z;dt>0?idx.push(i,i+1,i+2,i,i+2,i+3):idx.push(i,i+2,i+1,i,i+3,i+2)};
-cubes.forEach(c=>{const inf=o.lay?o.thk+(o.lx||0):(c.inflate||0),a0=th2?-(o.lay?Math.max(.05,o.thk+(o.lx||0)-.02):o.thk):-inf,a1=D;
-faces(og(c),c.size,c.uv,inf,c.mirror).forEach(f=>{const[TL,TR,BR,BL]=f.c.map(v=>new V3(...v)),[rx,ry,rw,rh]=f.r,nx=rw*S,ny=rh*S,ex=TR.clone().sub(TL).divideScalar(nx),ey=BL.clone().sub(TL).divideScalar(ny),n=new V3(...f.n),exu=ex.clone().normalize(),eyu=ey.clone().normalize(),ok=new Uint8Array(nx*ny),cl=new Float32Array(nx*ny*3),e1=Math.abs(f.n[0])!=1,e2=Math.abs(f.n[1])==1,X1=D>0?D+(e2?.02:.01):0,tmp=new THREE.Color();
-for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){const k=(Math.floor((ry+(j+.5)/S)*s_)*W_+Math.floor((rx+((c.mirror?nx-1-i:i)+.5)/S)*s_))*4;if(d[k+3]>=128){const q=j*nx+i;ok[q]=1;tmp.setRGB(d[k]/255,d[k+1]/255,d[k+2]/255).convertSRGBToLinear();cl[q*3]=tmp.r;cl[q*3+1]=tmp.g;cl[q*3+2]=tmp.b}}
-const no=n.clone().multiplyScalar(a1),ni=n.clone().multiplyScalar(a0),A=(p,v)=>p.clone().add(v),nex=exu.clone().negate(),ney=eyu.clone().negate(),nn=n.clone().negate(),z0=new V3(),ie=exu.clone().multiplyScalar(.01),ine=ie.clone().negate(),iy=eyu.clone().multiplyScalar(.01),iny=iy.clone().negate();
-for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){const q=j*nx+i;if(!ok[q])continue;const cc=[cl[q*3],cl[q*3+1],cl[q*3+2]];
-const pt=(a,b)=>TL.clone().addScaledVector(ex,a).addScaledVector(ey,b),p00=pt(i,j),p10=pt(i+1,j),p11=pt(i+1,j+1),p01=pt(i,j+1),o00=pt(i,j),o10=pt(i+1,j),o11=pt(i+1,j+1),o01=pt(i,j+1);
-const xl=e1&&X1>0&&i==0,xr=e1&&X1>0&&i==nx-1,yt=e2&&X1>0&&j==0,yb=e2&&X1>0&&j==ny-1;
-if(xl){p00.addScaledVector(exu,-X1);p01.addScaledVector(exu,-X1)}if(xr){p10.addScaledVector(exu,X1);p11.addScaledVector(exu,X1)}if(yt){p00.addScaledVector(eyu,-X1);p10.addScaledVector(eyu,-X1)}if(yb){p01.addScaledVector(eyu,X1);p11.addScaledVector(eyu,X1)}
-quad(A(p00,no),A(p10,no),A(p11,no),A(p01,no),n,cc);if(th2)quad(A(o00,ni),A(o10,ni),A(o11,ni),A(o01,ni),nn,cc);
-if(a1>0){if(xl)quad(p00,p01,A(p01,no),A(p00,no),nex,cc);if(xr)quad(p10,p11,A(p11,no),A(p10,no),exu,cc);if(yt)quad(p00,p10,A(p10,no),A(p00,no),ney,cc);if(yb)quad(p01,p11,A(p11,no),A(p01,no),eyu,cc)}
-const S4=(pa,pb,sh,nrm)=>quad(A(A(pa,sh),ni),A(A(pb,sh),ni),A(A(pb,sh),no),A(A(pa,sh),no),nrm,cc);
-if(i>0?!ok[q-1]:true)S4(o00,o01,i>0?z0:ie,nex);
-if(i<nx-1?!ok[q+1]:true)S4(o10,o11,i<nx-1?z0:ine,exu);
-if(j>0?!ok[q-nx]:true)S4(o00,o10,j>0?z0:iy,ney);
-if(j<ny-1?!ok[q+nx]:true)S4(o01,o11,j<ny-1?z0:iny,eyu)}})});
-const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('normal',new THREE.Float32BufferAttribute(nor,3));g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));g.setIndex(idx);return g}
-function addMesh(b,cubes,im,o={}){const tw=o.tw||64,th=o.th||Math.round(64*im.height/im.width),s_=im.width/tw,p=b.userData.p;let par=b;
-if(o.flip){par=new THREE.Group();b.add(par);par.rotation.y=Math.PI}
-const og=c=>[c.origin[0],c.origin[1],-(c.origin[2]+c.size[2])];let m;const bd=bendOf(b);
-if(o.vox){const vm=stdM({vertexColors:true,roughness:1,side:THREE.DoubleSide});vm.shadowSide=o.thk!=null?THREE.BackSide:THREE.FrontSide;if(o.arm)tagArm(vm);m=new THREE.Mesh(voxGeo(cubes.filter(c=>Array.isArray(c.uv)),im,o,og),vm)}
-else{const pos=[],nor=[],uv=[],idx=[];
-cubes.forEach(c=>{const v0=pos.length/3,arr=Array.isArray(c.uv);(arr?faces(og(c),c.size,c.uv,c.inflate||0,c.mirror):facesPF(og(c),c.size,c.uv,c.inflate||0)).forEach(f=>{const base=pos.length/3,[rx,ry,rw,rh]=f.r,fX=arr?!!c.mirror:(!!c.mirror)!==!!f.fx,fY=arr?false:!!f.fy,q=[[rx,ry],[rx+rw,ry],[rx+rw,ry+rh],[rx,ry+rh]],od=fX&&fY?[2,3,0,1]:fX?[1,0,3,2]:fY?[3,2,1,0]:[0,1,2,3],U=od.map(k=>{const t=q[k],e=.03;return[t[0]==rx?rx+e:rx+rw-e,t[1]==ry?ry+e:ry+rh-e]}),[TL,TR,BR,BL]=f.c,R_=bd&&f.n[1]==0?Math.max(4,Math.ceil(c.size[1]*2)):1;
-for(let r=0;r<=R_;r++){const t=r/R_;for(let s2=0;s2<2;s2++){const A=s2?TR:TL,B=s2?BR:BL,ua=s2?U[1]:U[0],ub=s2?U[2]:U[3];pos.push(A[0]+(B[0]-A[0])*t,A[1]+(B[1]-A[1])*t,A[2]+(B[2]-A[2])*t);nor.push(...f.n);uv.push((ua[0]+(ub[0]-ua[0])*t)/tw,1-(ua[1]+(ub[1]-ua[1])*t)/th)}}
-for(let r=0;r<R_;r++){const a=base+2*r,b2=a+1,c2=a+2,d2=a+3;f.rv?idx.push(a,b2,d2,a,d2,c2):idx.push(a,d2,b2,a,c2,d2)}});
-if(c.rotation&&(c.rotation[0]||c.rotation[1]||c.rotation[2])){const pv=c.pivot||[0,0,0],P3=new V3(pv[0],pv[1],-pv[2]),M3=new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(rad(c.rotation[0]),rad(c.rotation[1]),rad(c.rotation[2]),'ZYX')),vv=new V3();
-for(let vi=v0;vi<pos.length/3;vi++){vv.set(pos[vi*3],pos[vi*3+1],pos[vi*3+2]).sub(P3).applyMatrix4(M3).add(P3);pos[vi*3]=vv.x;pos[vi*3+1]=vv.y;pos[vi*3+2]=vv.z;vv.set(nor[vi*3],nor[vi*3+1],nor[vi*3+2]).transformDirection(M3);nor[vi*3]=vv.x;nor[vi*3+1]=vv.y;nor[vi*3+2]=vv.z}}});
-const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('normal',new THREE.Float32BufferAttribute(nor,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(idx);
-m=new THREE.Mesh(g,mkMat(T(im),o.ds,0,o.arm,o.mk));if(!o.arm&&!OV.has(b.name))m.material.shadowSide=THREE.BackSide}
-m.castShadow=true;m.userData.key=o.key||b.userData.key;if(o.mp)[].concat(m.material).forEach(x=>tagM(x,o.mp));
-if(bd){m.frustumCulled=false;m.userData.key=bd.u;m.userData.lo=bd.sl;m.userData.j=bd.j;regBend(m,bd);(o.ag||W).add(m)}else{m.position.set(-p[0],-p[1],-p[2]);m.frustumCulled=!m.isInstancedMesh;par.add(m)}}
-function bld(defs,par,im,pre,o={}){const m={};
-defs.forEach(d=>{const g=new THREE.Group();g.name=d.name;g.userData.p=[d.pivot[0],d.pivot[1],-d.pivot[2]];g.userData.key=pre+d.name;m[d.name]=g});
-defs.forEach(d=>{const g=m[d.name],pa=m[d.parent]||par,a=g.userData.p,b=pa.userData.p;g.position.set(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
-if(d.rotation)g.rotation.set(rad(d.rotation[0]),rad(d.rotation[1]),rad(d.rotation[2]),'ZYX');else g.rotation.order='ZYX';
-g.userData.rp=g.position.clone();g.userData.rr=g.rotation.clone();pa.add(g);if(!o.noreg)ALL[pre+d.name]=g;g.userData.act=o.act;g.userData.pre=pre;
-const cs=(d.cubes||[]).filter(c=>c.uv).map(c=>({origin:c.origin,size:c.size,uv:c.uv,inflate:c.inflate??d.inflate,mirror:c.mirror??d.mirror,pivot:c.pivot,rotation:c.rotation}));
-if(cs.length)addMesh(g,cs,im,{vox:(o.ov&&o.ov.has(d.name)&&(o.l3!==undefined?o.l3:P.l3d))||o.vx,tw:o.tw,th:o.th,ds:o.ds,arm:o.arm,thk:(o.ov&&o.ov.has(d.name)&&o.l3)?P.dep:o.thk,lay:(o.ov&&o.ov.has(d.name)&&o.l3)?1:0,lx:d.name=='jacket'?.07:0,mp:o.mp,key:o.key,ag:o.ag,mk:o.mk})});return m}
-function itemObj(im,vox,th,blk,kk){const g=new THREE.Group(),w=im.width,h=im.height;g.userData.g=[w*.375,h*.375];
-if(blk){const t=PT(im),ms=[0,1,2,3,4,5].map(()=>{const m=stdM({map:t,alphaTest:.5,roughness:1,side:THREE.DoubleSide});m.shadowSide=THREE.FrontSide;tagM(m,ipar(kk),kk);return m});const m=new THREE.Mesh(new THREE.BoxGeometry(6.4,6.4,6.4),ms);m.castShadow=true;g.add(m);g.userData.blk=1;return g}
-if(!vox){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),(()=>{const mt=mkMat(T(im),1);tagM(mt,ipar(kk),kk);return mt})());m.castShadow=true;g.add(m);return g}
-const d=pix(im),L=[];for(let j=0;j<h;j++)for(let i=0;i<w;i++){const k=(j*w+i)*4;if(d[k+3]<128)continue;L.push([new THREE.Matrix4().compose(new V3(i+.5-w/2,h/2-j-.5,0),new THREE.Quaternion(),new V3(1,1,th)),new THREE.Color().setRGB(d[k]/255,d[k+1]/255,d[k+2]/255).convertSRGBToLinear()])}
-const m=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1),(()=>{const mt=stdM({roughness:1});mt.userData.mp=ipar(kk);if(!P.toon&&envNow())mt.envMap=envNow();return mt})(),L.length||1);L.forEach((a,i)=>{m.setMatrixAt(i,a[0]);m.setColorAt(i,a[1])});if(!L.length)m.count=0;m.frustumCulled=false;m.castShadow=true;g.add(m);return g}
+async function refresh(){const g=++gen,old={};for(const k in ALL)old[k]=[ALL[k].position.clone(),ALL[k].rotation.clone()];
+const gi=async(s,def)=>{const u=s.url||(s.txt?res(s.txt):def);try{return await img(u)}catch(e){st('Failed to load '+u);return bad()}};
+const A=['helmet','chest','legs','boots'];
+const IM=await Promise.all(AC.map(async ac=>{const o={skin:await gi(ac.skin,SKIN)};
+for(const k of A)if(onFor(ac,k))o[k]=await gi(ac.a[k],MJ+`textures/models/armor/${ac.a[k].mat}_${k=='legs'?2:1}.png`);
+if(onFor(ac,'elytra'))o.elytra=await gi(ac.a.elytra,MJ+'textures/models/armor/elytra.png');
+for(const k of['L','R'])if(onFor(ac,'item'+k))o[k]=await gi(ac.i[k],MJ+(ac.i[k].blk?'textures/blocks/stone.png':'textures/items/diamond_sword.png'));
+return o}));
+if(g!==gen)return;
+W.traverse(o=>{o.geometry&&o.geometry.dispose()});W.clear();BM=[];ALL={};ITM={};
+AC.forEach((ac,ax)=>{const im=IM[ax],sk=im.skin.height*2==im.skin.width?legacy(im.skin):im.skin,pre=ac.id?'a'+ac.id+':':'';let AG=W;if(ac.id){AG=new THREE.Group();AG.position.set(ac.off,0,0);AG.userData.p=[0,0,0];W.add(AG)}
+const pl=PG.map(d=>{d=JSON.parse(JSON.stringify(d));if(ac.slim&&/Arm$|Sleeve$/.test(d.name)&&d.cubes){const c=d.cubes[0];c.size[0]=3;if(d.name[0]=='r')c.origin[0]=-7}if(ac.slim&&/Forearm$/.test(d.name))d.pivot[0]=d.name[0]=='r'?-5.5:5.5;return d});
+const B=bld(pl,AG,sk,pre,{ov:OV,ag:AG,act:pre,l3:ac.l3d});
+const AO={helmet:0,chest:0,legs:0,boots:.02};
+A.forEach(k=>{if(im[k]){const pc=DEFA[k];pc.b.forEach(x=>{if(!x.cubes||!x.cubes.length)return;const bn=B[x.name];if(!bn)return;const cs=x.cubes.filter(c=>Array.isArray(c.uv)).map(c=>({origin:c.origin,size:c.size,uv:c.uv,inflate:(c.inflate??x.inflate??0)+AO[k],mirror:c.mirror??x.mirror}));if(cs.length)addMesh(bn,cs,im[k],{ds:1,arm:1,vox:P.a3d,thk:P.athk,tw:pc.w,th:pc.h,ag:AG})})}});
+if(im.elytra)bld(DEFE.b,B.chest,im.elytra,pre+'E:',{tw:DEFE.w,th:DEFE.h,ds:1,arm:1,vx:P.e3d,thk:P.ethk});
+['L','R'].forEach(k=>{if(im[k]){const c=ac.i[k],h=itemObj(im[k],c.vox,c.th,c.blk,k);h.userData.cfg=c;ITM[pre+k]=h;B[k=='L'?'leftItem':'rightItem'].add(h)}})});
+scene.updateMatrixWorld(true);for(const k in ALL){const o=ALL[k];o.userData.rw=o.matrixWorld.clone();o.userData.rwi=o.userData.rw.clone().invert()}
+AC.forEach(a=>{if(a.id&&a.copy&&!a.done){const pr='a'+a.id+':';for(const k in ALL)if(k.startsWith(pr)){const mk=k.slice(pr.length);if(old[mk])old[k]=old[mk]}a.done=1}});
+for(const k in ALL)if(old[k]){ALL[k].position.copy(old[k][0]);ALL[k].rotation.copy(old[k][1])}
+const bs=$('#bs');bs.innerHTML='';Object.keys(ALL).forEach(k=>bs.add(new Option(k,k)));
+if(!ALL[selK])selK='root';selKey(selK);upd()}
+function selKey(k){inv();selK=k;$('#bs').value=k;attachGizmo()}
+function upd(){inv();if(upd.pq!==P.pq){upd.pq=P.pq;rsz()}cam.fov=P.fov;cam.updateProjectionMatrix();R.toneMappingExposure=P.expo;const s=P.shade;
+amb.intensity=s?P.amb*.65:1;key.intensity=s?P.key+P.amb*.35:0;fill.intensity=s?P.fill:0;key.castShadow=!!s;key.color.set(P.kc);fill.color.set(P.skc);
+if((P.bloom)&&!comp)ensureComp();if(bpass){bpass.strength=P.bs;bpass.radius=P.br;bpass.threshold=P.bt;bpass.enabled=!!P.bloom;cpass.uniforms.mx.value=P.bmx;bpass.materialHighPassFilter.uniforms.smoothWidth.value=Math.max(.01,P.bsw);bpass.bloomFactors=[0,1,2,3,4].map(i=>Math.pow(P.bfo,i))}
+ground.visible=!!(s&&P.gs);ground.material.opacity=P.gop;
+const a=rad(P.az),e=rad(P.el);key.position.set(Math.sin(a)*Math.cos(e)*5,1+Math.sin(e)*5,Math.cos(a)*Math.cos(e)*5);fill.position.set(-key.position.x,3,-key.position.z);
+grid.visible=!!P.grid;tc.setSpace(tc.mode=='translate'||P.wsp?'world':'local');tc.setRotationSnap(P.snap?rad(15):null);tc.setTranslationSnap(P.snap?.0625:null);
+W.traverse(o=>{if(o.isMesh)o.receiveShadow=!!P.self});
+Object.keys(ITM).forEach(key=>{const h=ITM[key],c=h.userData.cfg,b=h.userData.blk,sc=c.sc;h.rotation.set(rad(c.rx-(b?45:0)),rad(c.ry+(b?90:0)),rad(c.rz));h.scale.setScalar(sc);const g=h.userData.g||[6,6],off=b?new V3(0,0,3*sc):new V3(g[0],g[1],0).multiplyScalar(sc).applyEuler(h.rotation);h.position.set(c.px,c.py,c.pz).add(off)})}
+function rsz(){if(EXPORTING)return;R.setPixelRatio(Math.min(devicePixelRatio,innerWidth<900?1.5:2)*P.pq);inv();R.setSize(vw.clientWidth,vw.clientHeight,false);if(comp){comp.setPixelRatio(R.getPixelRatio());comp.setSize(vw.clientWidth,vw.clientHeight)}cam.aspect=vw.clientWidth/vw.clientHeight;cam.updateProjectionMatrix()}
+new ResizeObserver(rsz).observe(vw);
+
+function fitShadows(){if(!P.shade)return;W.updateMatrixWorld(true);const bb=new THREE.Box3(),v=new V3();for(const k in ALL){ALL[k].getWorldPosition(v);bb.expandByPoint(v)}if(bb.isEmpty())return;bb.expandByScalar(1.4);
+const cs=[];for(const x of[bb.min.x,bb.max.x])for(const y of[bb.min.y,bb.max.y])for(const z of[bb.min.z,bb.max.z])cs.push(new V3(x,y,z));
+const m=new THREE.Matrix4().lookAt(key.position,key.target.position,new V3(0,1,0));m.setPosition(key.position);const iv=m.invert();let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9,z0=1e9,z1=-1e9;
+cs.forEach(c=>{const q=c.clone().applyMatrix4(iv);x0=Math.min(x0,q.x);x1=Math.max(x1,q.x);y0=Math.min(y0,q.y);y1=Math.max(y1,q.y);z0=Math.min(z0,q.z);z1=Math.max(z1,q.z)});
+const sc=key.shadow.camera,pd=.3;sc.left=x0-pd;sc.right=x1+pd;sc.bottom=y0-pd;sc.top=y1+pd;sc.near=Math.max(.05,-z1-pd);sc.far=-z0+pd+60;sc.updateProjectionMatrix();let fl=0;W.traverse(o=>{if(o.isMesh&&o.castShadow&&[].concat(o.material).some(q=>q.shadowSide===THREE.FrontSide))fl=1});key.shadow.bias=-(fl?.004:.0005)/(sc.far-sc.near);key.shadow.normalBias=fl?Math.max(.002,Math.max(sc.right-sc.left,sc.top-sc.bottom)/key.shadow.mapSize.x*1.5):.0004}
