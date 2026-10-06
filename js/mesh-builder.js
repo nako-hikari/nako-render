@@ -1,7 +1,7 @@
 function voxGeo(cubes,im,o,og){const d=pix(im),W_=im.width,tw=o.tw||64,s_=W_/tw,S=Math.min(4,Math.max(1,Math.round(s_))),pos=[],nor=[],col=[],idx=[],th2=o.thk!=null,D=th2?0:P.dep;
 const quad=(a,b,c,e,n,cl)=>{const i=pos.length/3;[a,b,c,e].forEach(v=>{pos.push(v.x,v.y,v.z);nor.push(n.x,n.y,n.z);col.push(cl[0],cl[1],cl[2])});
 const ux=b.x-a.x,uy=b.y-a.y,uz=b.z-a.z,vx=c.x-a.x,vy=c.y-a.y,vz=c.z-a.z,dt=(uy*vz-uz*vy)*n.x+(uz*vx-ux*vz)*n.y+(ux*vy-uy*vx)*n.z;dt>0?idx.push(i,i+1,i+2,i,i+2,i+3):idx.push(i,i+2,i+1,i,i+3,i+2)};
-cubes.forEach(c=>{const inf=o.lay?o.thk+(o.lx||0):(c.inflate||0),a0=th2?-(o.lay?Math.max(.05,o.thk+(o.lx||0)-.02):o.thk):-inf,a1=D;
+cubes.forEach(c=>{const inf=o.lay?o.thk+(o.lx||0):(c.inflate||0),a0=th2?-(o.lay?Math.max(.05,o.thk+(o.lx||0)+.1):o.thk):-inf,a1=D;
 faces(og(c),c.size,c.uv,inf,c.mirror).forEach(f=>{const[TL,TR,BR,BL]=f.c.map(v=>new V3(...v)),[rx,ry,rw,rh]=f.r,nx=rw*S,ny=rh*S,ex=TR.clone().sub(TL).divideScalar(nx),ey=BL.clone().sub(TL).divideScalar(ny),n=new V3(...f.n),exu=ex.clone().normalize(),eyu=ey.clone().normalize(),ok=new Uint8Array(nx*ny),cl=new Float32Array(nx*ny*3),e1=Math.abs(f.n[0])!=1,e2=Math.abs(f.n[1])==1,X1=D>0?D+(e2?.02:.01):0,tmp=new THREE.Color();
 for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){const k=(Math.floor((ry+(j+.5)/S)*s_)*W_+Math.floor((rx+((c.mirror?nx-1-i:i)+.5)/S)*s_))*4;if(d[k+3]>=128){const q=j*nx+i;ok[q]=1;tmp.setRGB(d[k]/255,d[k+1]/255,d[k+2]/255).convertSRGBToLinear();cl[q*3]=tmp.r;cl[q*3+1]=tmp.g;cl[q*3+2]=tmp.b}}
 const no=n.clone().multiplyScalar(a1),ni=n.clone().multiplyScalar(a0),A=(p,v)=>p.clone().add(v),nex=exu.clone().negate(),ney=eyu.clone().negate(),nn=n.clone().negate(),z0=new V3(),ie=exu.clone().multiplyScalar(.01),ine=ie.clone().negate(),iy=eyu.clone().multiplyScalar(.01),iny=iy.clone().negate();
@@ -28,7 +28,7 @@ for(let r=0;r<R_;r++){const a=base+2*r,b2=a+1,c2=a+2,d2=a+3;f.rv?idx.push(a,b2,d
 if(c.rotation&&(c.rotation[0]||c.rotation[1]||c.rotation[2])){const pv=c.pivot||[0,0,0],P3=new V3(pv[0],pv[1],-pv[2]),M3=new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(rad(c.rotation[0]),rad(c.rotation[1]),rad(c.rotation[2]),'ZYX')),vv=new V3();
 for(let vi=v0;vi<pos.length/3;vi++){vv.set(pos[vi*3],pos[vi*3+1],pos[vi*3+2]).sub(P3).applyMatrix4(M3).add(P3);pos[vi*3]=vv.x;pos[vi*3+1]=vv.y;pos[vi*3+2]=vv.z;vv.set(nor[vi*3],nor[vi*3+1],nor[vi*3+2]).transformDirection(M3);nor[vi*3]=vv.x;nor[vi*3+1]=vv.y;nor[vi*3+2]=vv.z}}});
 const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('normal',new THREE.Float32BufferAttribute(nor,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(idx);
-m=new THREE.Mesh(g,mkMat(T(im),o.ds,0,o.arm,o.mk))}
+m=new THREE.Mesh(g,mkMat(T(im),o.ds,0,o.arm,o.mk));if(!o.arm&&!OV.has(b.name))m.material.shadowSide=THREE.BackSide}
 m.castShadow=true;m.userData.key=o.key||b.userData.key;if(o.mp)[].concat(m.material).forEach(x=>tagM(x,o.mp));
 if(bd){m.frustumCulled=false;m.userData.key=bd.u;m.userData.lo=bd.sl;m.userData.j=bd.j;regBend(m,bd);(o.ag||W).add(m)}else{m.position.set(-p[0],-p[1],-p[2]);m.frustumCulled=!m.isInstancedMesh;par.add(m)}}
 function bld(defs,par,im,pre,o={}){const m={};
