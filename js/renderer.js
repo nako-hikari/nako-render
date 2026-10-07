@@ -6,7 +6,10 @@ const tc=new THREE.TransformControls(cam,cv);tc.setSize(1.15);scene.add(tc);
 
 try{const gz=tc._gizmo;['picker','gizmo'].forEach(k=>{[gz[k].rotate,gz[k].translate].forEach((g,gi)=>{[...g.children].forEach(c=>{if(gi==0?(c.name=='E'||c.name=='XYZE'):(['XY','YZ','XZ','XYZ'].includes(c.name)))g.remove(c)})})});
 gz.picker.rotate.children.forEach(c=>{const ax=c.name;if(!/^[XYZ]$/.test(ax))return;const pa=c.geometry.attributes.position;for(let i=0;i<pa.count;i++){const v=new THREE.Vector3(pa.getX(i),pa.getY(i),pa.getZ(i)),q=v.clone();if(ax=='X')q.x=0;else if(ax=='Y')q.y=0;else q.z=0;q.normalize();v.sub(q).multiplyScalar(3).add(q);pa.setXYZ(i,v.x,v.y,v.z)}pa.needsUpdate=true});
-gz.picker.translate.children.forEach(c=>{const ax=c.name;if(!/^[XYZ]$/.test(ax))return;const pa=c.geometry.attributes.position;for(let i=0;i<pa.count;i++){let x=pa.getX(i),y=pa.getY(i),z=pa.getZ(i);if(ax=='X'){y*=2.6;z*=2.6}else if(ax=='Y'){x*=2.6;z*=2.6}else{x*=2.6;y*=2.6}pa.setXYZ(i,x,y,z)}pa.needsUpdate=true})}catch(e){}
+['XY','YZ','XZ'].forEach(n=>['picker','gizmo'].forEach(k=>{const g=gz[k].scale,c=g.children.find(x=>x.name==n);if(c)g.remove(c)}));
+[gz.picker.translate,gz.picker.scale].forEach(grp=>grp.children.forEach(c=>{const ax=c.name;if(!/^[XYZ]$/.test(ax))return;const pa=c.geometry.attributes.position;for(let i=0;i<pa.count;i++){let x=pa.getX(i),y=pa.getY(i),z=pa.getZ(i);if(ax=='X'){y*=2.6;z*=2.6}else if(ax=='Y'){x*=2.6;z*=2.6}else{x*=2.6;y*=2.6}pa.setXYZ(i,x,y,z)}pa.needsUpdate=true}));
+const cm=(s,o,v)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(s,s,s),new THREE.MeshBasicMaterial({depthTest:false,depthWrite:false,transparent:true,side:THREE.DoubleSide,fog:false,toneMapped:false,color:0xffffff,opacity:o,visible:v}));m.name='XYZ';return m};
+gz.gizmo.scale.add(cm(.2,.55,true));gz.picker.scale.add(cm(.34,.15,true))}catch(e){}
 
 
 tc.addEventListener('change',inv);tc.addEventListener('dragging-changed',e=>{orbit.enabled=!e.value;tcT=performance.now()});

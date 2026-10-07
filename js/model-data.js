@@ -20,5 +20,5 @@ const DEFA={helmet:{w:64,h:32,b:[{name:'head',inflate:1,cubes:[cb([-4,24,-4],[8,
 chest:{w:64,h:32,b:[{name:'body',inflate:1.01,cubes:[bdy]},{name:'rightArm',inflate:1,cubes:[rA]},{name:'leftArm',inflate:1,mirror:true,cubes:[lA]}]},
 legs:{w:64,h:32,b:[{name:'body',inflate:.5,cubes:[bdy]},{name:'rightLeg',inflate:.5,cubes:[rL]},{name:'leftLeg',inflate:.5,mirror:true,cubes:[lL]}]},
 boots:{w:64,h:32,b:[{name:'rightLeg',inflate:1,cubes:[rL]},{name:'leftLeg',inflate:1,mirror:true,cubes:[lL]}]}};
-const DEFE={b:[{name:'leftWing',parent:'body',pivot:[.3,22,2.2],rotation:[0,0,15],cubes:[{origin:[0,2,2.2],size:[10,20,2],uv:[22,0]}]},{name:'rightWing',parent:'body',pivot:[-.3,22,2.2],rotation:[0,0,-15],mirror:true,cubes:[{origin:[-10,2,2.2],size:[10,20,2],uv:[22,0]}]}],w:64,h:32};
+const DEFE={b:[{name:'leftWing',parent:'body',pivot:[0,24,0],cubes:[{origin:[-10,0,0],size:[10,20,2],uv:[22,0]}]},{name:'rightWing',parent:'body',pivot:[0,24,0],mirror:true,cubes:[{origin:[0,0,0],size:[10,20,2],uv:[22,0]}]}],w:64,h:32};
 

@@ -27,6 +27,15 @@ function showModal(title, message, options) {
     document.getElementById('nakoModalBody').textContent = message;
     const footer = document.getElementById('nakoModalFooter');
     footer.innerHTML = '';
+    let inputEl = null;
+    if (options.input) {
+        inputEl = document.createElement('input');
+        inputEl.type = 'text';
+        inputEl.value = options.input.value || '';
+        inputEl.placeholder = options.input.placeholder || '';
+        inputEl.style.cssText = 'width:100%;box-sizing:border-box;margin-top:12px';
+        document.getElementById('nakoModalBody').appendChild(inputEl);
+    }
     if (options.onConfirm) {
         const cancel = document.createElement('button');
         cancel.className = 'secondary interactive';
@@ -36,8 +45,11 @@ function showModal(title, message, options) {
         const confirmBtn = document.createElement('button');
         confirmBtn.className = options.danger ? 'danger interactive' : 'primary interactive';
         confirmBtn.textContent = options.confirmText || (options.danger ? 'Delete' : 'Confirm');
-        confirmBtn.onclick = () => { closeNakoModal(); options.onConfirm(); };
+        confirmBtn.onclick = () => { closeNakoModal(); options.onConfirm(inputEl ? inputEl.value : undefined); };
         footer.appendChild(confirmBtn);
+        if (inputEl) {
+            inputEl.onkeydown = ev => { if (ev.key === 'Enter') confirmBtn.click(); };
+        }
     } else {
         const ok = document.createElement('button');
         ok.className = 'secondary interactive';
@@ -46,6 +58,7 @@ function showModal(title, message, options) {
         footer.appendChild(ok);
     }
     document.getElementById('nakoModal').classList.add('open');
+    if (inputEl) setTimeout(() => { inputEl.focus(); inputEl.select(); }, 60);
 }
 function closeNakoModal() {
     document.getElementById('nakoModal').classList.remove('open');
