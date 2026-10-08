@@ -1,4 +1,4 @@
-const VERSION = 'v1.3';
+const VERSION = 'v1.3.1';
 const CACHE = 'mc-poser-' + VERSION;
 
 const CORE = [
